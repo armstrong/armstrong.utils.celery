@@ -1,12 +1,7 @@
-from django.db import models
-
+from ._utils import SimpleModel
 from ._utils import TestCase
 from ..utils import model_to_tuple
 from ..utils import tuple_to_model
-
-
-class SimpleModel(models.Model):
-    pass
 
 
 class model_to_tupleTestCase(TestCase):
