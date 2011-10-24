@@ -80,8 +80,8 @@ class signal_taskTestCase(TestCase):
         self.instance.objects = self.objects
 
     def mock_tasks(self, *args):
-        delay = fudge.Fake().expects_call().with_args(*args)
-        task = fudge.Fake().has_attr(delay=delay)
+        apply_async = fudge.Fake().expects_call().with_args(args=list(args), kwargs={})
+        task = fudge.Fake().has_attr(apply_async=apply_async)
         tasks = fudge.Fake().has_attr(async_signal=task)
         return tasks
 

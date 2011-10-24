@@ -8,7 +8,8 @@ def signal_task(*args, **kwargs):
     def signal(sender, instance, **kwargs):
        sender_tuple = model_to_tuple(sender)
        instance_tuple = model_to_tuple(instance) + (instance.pk, )
-       return tasks.async_signal.delay(sender_tuple, instance_tuple)
+       return tasks.async_signal.apply_async(
+                args=[sender_tuple, instance_tuple], kwargs=kwargs)
     return signal
 
 
