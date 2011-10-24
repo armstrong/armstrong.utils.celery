@@ -21,6 +21,11 @@ class model_to_tupleTestCase(TestCase):
     def test_second_parameter_is_the_model_name(self):
         self.assertEqual("simplemodel", self.result[1])
 
+    def test_supports_model_classes_as_well(self):
+        result = model_to_tuple(SimpleModel)
+        self.assertTrue("tests" in result)
+        self.assertTrue("simplemodel" in result)
+
 
 class tuple_to_modelTestCase(TestCase):
     def test_loads_model_from_tuple(self):
