@@ -25,7 +25,7 @@ class SignalTask(Task):
         super(SignalTask, self).execute(request, pool, loglevel, logfile, **kwargs)
 
     @classmethod
-    def apply_async(self, args=None, kwargs=None):
+    def apply_async(self, args=None, kwargs=None, **options):
         # TODO: Test this in an automated fashion.
         #       This has been tested manually, but there's no clean way to
         #       test it in an automated fashion.  Rather than delay the release,
@@ -39,7 +39,7 @@ class SignalTask(Task):
         if instance is not None:
             kwargs["instance_tuple"] = model_to_tuple(instance) + (instance.pk, )
 
-        return super(SignalTask, self).apply_async([], kwargs)
+        return super(SignalTask, self).apply_async([], kwargs, **options)
 
 
 def async_signal(func):
