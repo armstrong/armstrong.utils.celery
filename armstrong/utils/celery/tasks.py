@@ -6,23 +6,33 @@ from .utils import model_to_tuple
 from .utils import tuple_to_model
 
 
+def deserialize_sender_and_instance(kwargs):
+    sender_tuple, instance_tuple = (kwargs.pop("sender_tuple"),
+            kwargs.pop("instance_tuple", None))
+    sender = tuple_to_model(sender_tuple)
+    kwargs["sender"] = sender
+    if instance_tuple is not None:
+        instance_model = tuple_to_model(instance_tuple[:2])
+        try:
+            instance = instance_model.objects.get(pk=instance_tuple[-1])
+            kwargs["instance"] = instance
+        except instance_model.DoesNotExist:
+            # TODO: retry?
+            pass
+
+
 class SignalTask(Task):
     abstract = True
 
     def execute(self, request, pool, loglevel, logfile, **kwargs):
-        sender_tuple, instance_tuple = (request.kwargs.pop("sender_tuple"),
-                request.kwargs.pop("instance_tuple", None))
-        sender = tuple_to_model(sender_tuple)
-        request.kwargs["sender"] = sender
-        if instance_tuple is not None:
-            instance_model = tuple_to_model(instance_tuple[:2])
-            try:
-                instance = instance_model.objects.get(pk=instance_tuple[-1])
-                request.kwargs["instance"] = instance
-            except instance_model.DoesNotExist:
-                # TODO: retry?
-                pass
+        deserialize_sender_and_instance(request.kwargs)
         super(SignalTask, self).execute(request, pool, loglevel, logfile, **kwargs)
+
+    @classmethod
+    def apply(self, args=None, kwargs=None, **options):
+        if kwargs:
+            deserialize_sender_and_instance(kwargs)
+        super(SignalTask, self).apply(args, kwargs, **options)
 
     @classmethod
     def apply_async(self, args=None, kwargs=None, **options):
