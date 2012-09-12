@@ -1,6 +1,5 @@
 from celery.task import Task
 import fudge
-from fudge.inspector import arg
 
 from ._utils import SimpleModel
 from ._utils import TestCase
