@@ -13,6 +13,10 @@ def deserialize_sender_and_instance(kwargs):
     kwargs["sender"] = sender
     if instance_tuple is not None:
         instance_model = tuple_to_model(instance_tuple[:2])
+        if instance_model is None:
+            # Handle situtation where invalid data is sent across the wire
+            return
+
         try:
             instance = instance_model.objects.get(pk=instance_tuple[-1])
             kwargs["instance"] = instance
